@@ -101,9 +101,9 @@ export default function Home() {
         }
     }, [bot])
 
-    const handleSubmit = async()=>{
+    const handleSubmit = async () => {
         console.log(val[showlist])
-        const response = axios.post("http://localhost:8000/gmail/send",{emailData:aires.emailData,from: val[showlist].id,});
+        const response = axios.post("http://localhost:8000/gmail/send", { emailData: aires.emailData, from: val[showlist].id, });
         console.log(response);
     }
 
@@ -132,11 +132,17 @@ export default function Home() {
                                                         initial={{ opacity: 0 }}
                                                         animate={{ opacity: 1 }}
                                                         transition={{ duration: 1 }}
-                                                        className="flex flex-col gap-4">
-                                                        <p className="text-white text-center text-5xl font-semibold">Successfully Registered With  </p>
-                                                        <br />
-                                                        {userdata && <span className="text-[#7578ff] text-5xl font-bold uppercase">{userdata.data.emailAddress}</span>}
-                                                        <span>!</span>
+                                                        className="flex items-center flex-col gap-6">
+                                                        <div className="flex flex-row gap-4">
+                                                            <p className="text-white text-5xl font-semibold">HELLO  </p>
+                                                            {userdata && <span className="text-[#7578ff] text-5xl font-bold uppercase">{userdata.data.emailAddress}</span>}
+                                                        </div>
+                                                        <motion.div
+                                                            onClick={() => { setTab("mail") }}
+                                                            whileHover={{ scale: 1.05 }}
+                                                            className="bg-blue-600 flex justify-center items-center text-white font-semibold text-xl rounded-full w-40 h-20">
+                                                            Get Started
+                                                        </motion.div>
                                                     </motion.div>
                                                 </div>
                                             ) : (
@@ -144,10 +150,17 @@ export default function Home() {
                                                     initial={{ opacity: 0 }}
                                                     animate={{ opacity: 1 }}
                                                     transition={{ duration: 1 }}
-                                                    className="flex flex-row gap-6">
-                                                    <p className="text-white text-5xl font-semibold">HELLO  </p>
-                                                    {userdata && <span className="text-[#7578ff] text-5xl font-bold uppercase">{userdata.data.displayName}</span>}
-                                                    <span>!</span>
+                                                    className="flex items-center flex-col gap-6">
+                                                    <div className="flex flex-row gap-4">
+                                                        <p className="text-white text-5xl font-semibold">HELLO  </p>
+                                                        {userdata && <span className="text-[#7578ff] text-5xl font-bold uppercase">{userdata.data.displayName}</span>}
+                                                    </div>
+                                                    <motion.div
+                                                        onClick={() => { setTab("mail") }}
+                                                        whileHover={{ scale: 1.05 }}
+                                                        className="bg-blue-600 flex justify-center items-center text-white font-semibold text-xl rounded-full w-40 h-20">
+                                                        Get Started
+                                                    </motion.div>
                                                 </motion.div>
                                             )
                                         }
@@ -212,7 +225,7 @@ export default function Home() {
                                                     <motion.div
                                                         initial={{ opacity: 0 }}
                                                         animate={{ opacity: 1 }}
-                                                        exit={{opacity:0}}
+                                                        exit={{ opacity: 0 }}
                                                         transition={{ duration: 1 }}
                                                         className="w-[85%]  h-[90%] overflow-y-scroll shadow-cards p-8 gap-4 flex flex-col items-center rounded-xl">
                                                         {
@@ -236,7 +249,7 @@ export default function Home() {
                                                                         </p>
                                                                     </div>
                                                                     <div className="w-full mt-auto">
-                                                                        <button  onClick={()=>handleSubmit()} className="p-4 pl-8 pr-8 gap-4 flex items-end flex-row rounded-full bg-blue-600 text-white font-semibold">
+                                                                        <button onClick={() => handleSubmit()} className="p-4 pl-8 pr-8 gap-4 flex items-end flex-row rounded-full bg-blue-600 text-white font-semibold">
                                                                             Send <span>
                                                                                 <SendHorizontal className="text-white" />
                                                                             </span>
