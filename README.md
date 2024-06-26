@@ -31,7 +31,7 @@ Features in this project includes :
 ## Installation setup
 1. Clone the repository to your local machine
 ```bash
-git clone https://github.com/shraddha-gawde/reachInbox-assignment.git
+git clone https://github.com/vikrant886/ReachInbox-Assignment.git
 ```
 2. Navigate to the root directory of the project directory :
 ```bash 
