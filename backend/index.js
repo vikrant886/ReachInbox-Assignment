@@ -4,6 +4,7 @@ const app = express()
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const outlookrouter = require("./routes/outlook.route")
+const gmailrouter = require("./routes/gmail.route")
 require("dotenv").config()
 
 app.use(cors())
@@ -20,6 +21,7 @@ app.get("/", (req, res) => {
     res.send("hello there")
 })
 app.use("/outlook", outlookrouter)
+app.use("/gmail", gmailrouter)
 
 app.listen(8000, () => {
     console.log("server listening at 8000");
