@@ -10,7 +10,7 @@ Features in this project includes :
 4. Assign Automatic labels (Interested, Not Interested, More Info required)
 5. Based of the context email, send automated replies using OpenAI
 
-![download](https://raw.githubusercontent.com/vikrant886/ReachInbox-Assignment/main/frontend/src/images/image.png)
+![image](https://raw.githubusercontent.com/vikrant886/ReachInbox-Assignment/main/frontend/src/images/image.png)
 # technologies used:
 - Node.js
 - Express.js
@@ -20,9 +20,7 @@ Features in this project includes :
 # npm packages used
 - dotenv
 - Axios
-- bullMQ
 - google-auth-library
-- ioredis
 - @microsoft/microsoft-graph-client
 - @azure/msal-node
 
@@ -52,6 +50,21 @@ or we can use backend deployed link also.
 ```bash
 npm run dev
 ```
-![download](https://raw.githubusercontent.com/vikrant886/ReachInbox-Assignment/main/frontend/src/images/Screenshot%202024-06-26%20204748.png)
-![download](https://raw.githubusercontent.com/vikrant886/ReachInbox-Assignment/main/frontend/src/images/Screenshot%202024-06-26%20204943.png)
-![download](https://raw.githubusercontent.com/vikrant886/ReachInbox-Assignment/main/frontend/src/images/Screenshot%202024-06-26%20205038.png)
+![image](https://raw.githubusercontent.com/vikrant886/ReachInbox-Assignment/main/frontend/src/images/Screenshot%202024-06-26%20204748.png)
+## API Endpoints
+
+### For Google's OAuth2.0:
+- `https://reachinbox-assignment-4rf9.onrender.com/auth/google` - GET for google authentication
+- `https://reachinbox-assignment-4rf9.onrender.com/api/mail/userInfo/:email` - GET request to view user profile
+- `https://reachinbox-assignment-4rf9.onrender.com/api/mail/allDrafts/:email` - GET request to view all drafts mail.
+- `https://reachinbox-assignment-4rf9.onrender.com/api/mail/read/:email/message/:message` - GET request to read a 
+![image](https://raw.githubusercontent.com/vikrant886/ReachInbox-Assignment/main/frontend/src/images/Screenshot%202024-06-26%20204943.png)
+### For microsoft azur's OAuth2.0:
+
+- `https://reachinbox-assignment-4rf9.onrender.com/outlook/signin` - GET for micosoft azur authentication for outlook
+- `https://reachinbox-assignment-4rf9.onrender.com/outlook/callbak` - GET for micosoft azur getting access token
+- `https://reachinbox-assignment-4rf9.onrender.com/outlook/profile` - GET request to get profile data for particular user
+- `https://reachinbox-assignment-4rf9.onrender.com/outlook/all-Mails/{email}` - GET request for get ist of all mails of outllok user
+- `https://reachinbox-assignment-4rf9.onrender.com/outlook/{email}/read-Msg/{:message}` = GET request to read partivcular mail using messange id
+- `https://reachinbox-assignment-4rf9.onrender.com/outlook/{email}/send-Mail` - post request for sending mail to another user using outlook
+![image](https://raw.githubusercontent.com/vikrant886/ReachInbox-Assignment/main/frontend/src/images/Screenshot%202024-06-26%20205038.png)
