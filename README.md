@@ -10,6 +10,8 @@ Features in this project includes :
 4. Assign Automatic labels (Interested, Not Interested, More Info required)
 5. Based of the context email, send automated replies using OpenAI
 
+Video Explanation: [Link](https://www.loom.com/share/3f5451d2c4ee47f0b3fcf112b08d4781?sid=2d927820-abf6-4f6a-aa9f-b62e64bf48fa)
+
 ![image](https://raw.githubusercontent.com/vikrant886/ReachInbox-Assignment/main/frontend/src/images/image.png)
 # technologies used:
 - Node.js
