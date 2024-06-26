@@ -6,7 +6,10 @@ const cookieParser = require("cookie-parser");
 const outlookrouter = require("./routes/outlook.route")
 const gmailrouter = require("./routes/gmail.route")
 require("dotenv").config()
+const bodyparser = require('body-parser');
 
+app.use(bodyparser.json());
+app.use(bodyparser.urlencoded({extended: true}));
 app.use(cors())
 app.use(
     session({

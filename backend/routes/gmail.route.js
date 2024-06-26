@@ -6,6 +6,7 @@ const {
     callback,
     getMails,
     // readMail,
+    aiResponseGen,
     getUser,
 } = require("../controller/Gmail.controller");
 
@@ -17,6 +18,7 @@ gmailRouter.get('/signin', signin);
 gmailRouter.get('/callback', callback);
 gmailRouter.get('/profile', getUser);
 gmailRouter.get('/all-Mails', getMails);
+gmailRouter.post('/ai',aiResponseGen)
 // gmailRouter.get('/:email/read-Msg/:message', readMail);
 
 

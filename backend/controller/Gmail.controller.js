@@ -5,9 +5,12 @@ const { createConfig } = require("../helper/config");
 const { OAuth2Client } = require("google-auth-library");
 // const { connection } = require("../middlewares/redis.middleware");
 const googleRouter = express.Router();
-const OpenAI = require("openai");
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_SECRECT_KEY });
+const genAI = new GoogleGenerativeAI(process.env.API_KEY);
+
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
 
 // google oauth
 const oAuth2Client = new OAuth2Client({
@@ -46,12 +49,7 @@ const callback = async (req, res) => {
         accessToken = access_token;
         console.log(accessToken)
 
-        if (scope.includes(scopes.join(" "))) {
-            // res.send("Restricted scopes test passed.");
-            res.redirect("http://localhost:3000/home?type=gmail");
-        } else {
-            res.send("Restricted scopes test failed: Scopes are not restricted.");
-        }
+        res.redirect("http://localhost:3000/home?type=gmail");
     } catch (error) {
         console.error("Error exchanging authorization code:", error.message);
         res.status(500).send("Error exchanging authorization code.");
@@ -276,95 +274,82 @@ const getEachMail = async (data) => {
 //   }
 // };
 
-const sendMail = async (data, token) => {
+const getMailContent = async (messageId, messtype) => {
     try {
-        if (!token) {
-            throw new Error("Token not found, please login again to get token");
+        if (messtype === "gmail") {
+            console.log("messageid is: ", messageId)
+            const mailUrl = `https://gmail.googleapis.com/gmail/v1/users/me/messages/${messageId}`;
+            const mailConfig = createConfig(mailUrl, accessToken);
+            const response = await axios(mailConfig);
+            const messageBody = response.data.snippet; 
+            console.log(messageBody)
+            return messageBody;
         }
-
-        const emailContent = `dont use any name instead use dear user.here you have to create advertisement mail, your reply should provide an enticing advertisement for our ReachInbox platform. Highlight the key features and benefits to capture their interest and encourage them to learn more. Here's a suggested prompt:\n\n'Hello!\n\nWe're thrilled to introduce you to ReachInbox – the ultimate email management platform designed to streamline your communication workflows and boost your productivity.\n\nDiscover how ReachInbox can transform your email experience:\n\n- **Secure Mailing:** Rest assured that your emails are protected with state-of-the-art encryption, keeping your communication private and secure.\n\n- **Automated Emails:** Say goodbye to manual tasks! With ReachInbox, you can automate your email workflows, schedule emails, and set triggers to send messages at the perfect time.\n\n- **Customizable Templates:** Personalize your emails effortlessly! Create stunning templates tailored to your brand and audience, saving you time and effort.\n\nReady to supercharge your email productivity? Reply to this email to learn more about ReachInbox and take your communication to the next level.\n\nDon't miss out on this opportunity to revolutionize your inbox with ReachInbox. Get started today! . give this form of containers heading, features and benefits`;
-
-        const response = await openai.chat.completions.create({
-            model: "gpt-3.5-turbo-0301",
-            max_tokens: 350,
-            temperature: 0.5,
-            messages: [
-                {
-                    role: "user",
-                    content: emailContent,
-                },
-            ],
-        });
-
-        const content = response.choices[0]?.message?.content;
-        console.log(content)
-
-        const mailOptions = {
-            from: data.from,
-            to: data.to,
-            subject: `${data.label} of ReachInBox`,
-            text: `${data.label} of ReachInBox`,
-            html: `
-        <div style="background-color: #f5f5f5; padding: 20px; border-radius: 10px; text-align: center; font-family: Arial, sans-serif;">
-          <h2 style="color: #333;">Exciting Offer from Reach-In Box!</h2>
-          <p style="font-size: 16px; color: #666;">Dear valued customer,</p>
-          <p style="font-size: 16px; color: #666;">${content}</p>
-          <p style="font-size: 16px; color: #666;">Best regards,</p>
-          <p style="font-size: 16px; color: #666;"><strong>Shraddha Gawde</strong><br>Reach-In Box</p>
-        </div>`
-        };
-
-        const emailData = {
-            raw: Buffer.from(
-                [
-                    'Content-type: text/html;charset=iso-8859-1',
-                    'MIME-Version: 1.0',
-                    `from: ${data.from}`,
-                    `to: ${data.to}`,
-                    `subject: ${mailOptions.subject}`,
-                    `text: ${mailOptions.text}`,
-                    `html: ${mailOptions.html}`,
-
-
-                ].join('\n')
-            ).toString('base64')
-        };
-
-        const sendMessageResponse = await axios.post(`https://gmail.googleapis.com/gmail/v1/users/${data.from}/messages/send`, emailData, {
-            headers: {
-                "Content-Type": "application/json",
-                'Authorization': `Bearer ${token}`
-            }
-        });
-
-        // Modify label for the sent email
-        const labelUrl = `https://gmail.googleapis.com/gmail/v1/users/${data.from}/messages/${sendMessageResponse.data.id}/modify`;
-        const labelConfig = {
-            method: 'POST',
-            url: labelUrl,
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
-            data: {
-                addLabelIds: ["Label_4"]
-            }
-        };
-        await axios(labelConfig);
-
-        return sendMessageResponse.data.id;
+        else {
+            const url = `https://graph.microsoft.com/v1.0/me/messages/${messageId}`;
+            const token = accessToken
+            const config = createConfig(url, token);
+            const response = await axios(config);
+            let data = await response.data; 
+            console.log(data)
+            return data;
+        }
     } catch (error) {
-        console.error("Error sending email:", error);
-        throw new Error("Can't send email: " + error.message);
+        console.error("Error fetching email content:", error.message);
+        throw new Error("Can't fetch email content: " + error.message);
     }
 };
 
+const aiResponseGen = async (req, res) => {
+    try {
+        // console.log(req)
+        const { from, to, label, messageId, message, subject } = req.body;
 
+        if (!accessToken) {
+            throw new Error("Token not found, please login again to get token");
+        }
+        const maillabel = `email: subject: "${subject} message: "${message}" from "${from} . Based on this mail, generate one word categorizing the mail into Interested, Not Interested and More information required. `
+        const answer = await model.generateContent(maillabel);
+        const resp = await answer.response;
+        const val = resp.text();
+
+        // console.log(val)
+
+        // Create a prompt for OpenAI using the received email content
+        const emailContent = `The user received the following email: subject: "${subject} message: "${message}" from "${from} and i am Vikrant Rana from ReachInbox and you are writing message from myside to the clients for reachInbox. Based on this, i want you to professional geneterate a message as the response to the mail . If interested tell more about ReachInbox and how they can provide you to enhance you mailing experience, If not interested Ask them why are you not interested and how can we make it better for other users as a feedback. If more info req, If the email mentions they are interested to know more, your reply should ask them if they are willing to hop on to a demo call by suggesting a time.`
+        const result = await model.generateContent(emailContent);
+        const response = await result.response;
+        const text = response.text();
+        // console.log(text);
+        content = text
+
+        const mailOptions = {
+            from,
+            to,
+            predictedLabel:val,
+            data: content
+        };
+
+        console.log("***maildata", mailOptions)
+
+        // const sendMessageResponse = await axios.post(`https://gmail.googleapis.com/gmail/v1/users/me/messages/send`, emailData, {
+        //     headers: {
+        //         "Content-Type": "application/json",
+        //         'Authorization': `Bearer ${accessToken}`
+        //     }
+        // });
+
+        res.json({mailOptions});
+    } catch (error) {
+        console.error("Error sending email:", error);
+        res.status(500).send("Can't send email: " + error.message);
+    }
+};
 
 module.exports = {
     getUser,
     signin,
     callback,
     getMails,
-    // readMail,
-    // sendMail,
+    aiResponseGen,
 };
