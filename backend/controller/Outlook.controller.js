@@ -135,11 +135,29 @@ const readMail = async (req, res) => {
   }
 };
 
+const sendMail = async (req, res) => {
+  try {
+      const {emailData,from} =req.body
+      console.log("for sendding ", emailData,from)
+      const sendMessageResponse = await axios.post(`https://gmail.googleapis.com/gmail/v1/users/${from}/messages/send`, emailData, {
+          headers: {
+              "Content-Type": "application/json",
+              'Authorization': `Bearer ${accessToken}`
+          }
+      });
+
+  } catch (error) {
+      console.log(error)
+      throw new Error("Can't send email: " + error.message);
+
+  }
+};
+
 module.exports = {
     getUser,
     signin,
     callback,
     getMails,
     readMail,
-      // sendMail,
+      sendMail,
 };

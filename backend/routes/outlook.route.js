@@ -7,7 +7,8 @@ const {
     getMails,
     readMail,
     getUser,
-    sendMail
+    sendMail,
+    // sendMail
 } = require("../controller/Outlook.controller");
 
 outlookRouter.use(express.json());
@@ -19,18 +20,7 @@ outlookRouter.get('/callback', callback);
 outlookRouter.get('/profile', getUser);
 outlookRouter.get('/all-Mails/:email', getMails);
 outlookRouter.get('/:email/read-Msg/:message', readMail);
+outlookRouter.post('/send',sendMail)
 
-outlookRouter.post("/:email/send-Mail", async (req, res) => {
-    try {
-        const token = await redisGetToken(req.params.email);
-        const result = await sendMail(req.body, token);
-        res.status(200).json({ message: "Email sent successfully", result });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
 
-//   outlookRouter.post("/sendone/:email/:id", sendOutlookMailViaQueue)
-// });
-// outlookRouter.post("/sendone/:email/:id", sendOutlookMailViaQueue);
 module.exports = outlookRouter;

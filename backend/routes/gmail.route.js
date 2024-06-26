@@ -8,6 +8,7 @@ const {
     // readMail,
     aiResponseGen,
     getUser,
+    sendMail,
 } = require("../controller/Gmail.controller");
 
 gmailRouter.use(express.json());
@@ -19,6 +20,7 @@ gmailRouter.get('/callback', callback);
 gmailRouter.get('/profile', getUser);
 gmailRouter.get('/all-Mails', getMails);
 gmailRouter.post('/ai',aiResponseGen)
+gmailRouter.post('/send',sendMail)
 // gmailRouter.get('/:email/read-Msg/:message', readMail);
 
 
